@@ -1,0 +1,432 @@
+
+						★採用新鮮的食材，純手工製作
+★三代傳承
+					
+
+【可味手工包子店】肉包+竹筍包+黑糖花豆包+芋泥包(各6入)
+
+
+
+台北中山區三代傳承老店,陪伴著無數台北人的每一天
+
+
+商品規格
+
+
+【可味手工包子店】肉包+竹筍包+黑糖花豆包+芋泥包(各6入)
+
+
+
+◆商品名稱：【可味手工包子店】肉包+竹筍包+黑糖花豆包+芋泥包(各6入)(含運)。 
+
+
+
+
+注意事項
+
+
+◆到貨時間：付款後扣除例假日及國定假日約3~7天到貨。
+
+
+
+
+
+
+var erUrlPrefix='https://rec.udn.com/';
+
+var lastviewPdtCookie = 'LAST_VIEW_PRODUCT_LIST';
+var viewedKdid = 'ERViewed03'; 
+var trackKdid = 'ERTrack03'; 
+var viewedKdidTop = 'ERViewed03'+'T'; 
+var trackKdidTop = 'ERTrack03'+'T';
+
+var _qqueryList = _qqueryList || [];
+var _qqueryRecord = _qqueryRecord || [];
+
+function getRccoProdsByProdByT(cargxuid, salecate, kdid, isFirst){
+	
+	$('#currentRecoProdXuid').val(cargxuid);
+	$('#currentRecoProdCateid').val(salecate);
+	$('#currentRecoKdid').val(kdid);
+	
+	var queryName = "Viewed";
+	if(kdid == trackKdid){
+		queryName = "Track";
+	}
+	if(isFirst == "Y"){  //是否為該頁籤第一次
+		queryName += "First";
+	}
+	
+	_qqueryRecord = [];
+	_qqueryRecord.push({
+	    cid : 'udn',
+	    type: 'item',
+	    act : 'view',
+	    pid : cargxuid,
+	    cat : salecate,
+	    name : queryName
+	});
+    
+	_qevents = [];
+	_qqueryList = [];
+	_qqueryList.push(_qqueryRecord);
+    doEtuQuery();
+    
+}
+
+function etuParam_ViewedFirst(){
+	var etuParam = doEtuParamSetting('ERViewed03_recommend_content', 'initTrackTabEvent');
+	return etuParam;
+}
+
+function etuParam_Viewed(){
+	var etuParam = doEtuParamSetting('ERViewed03_recommend_content', '');
+	return etuParam;
+}
+
+function etuParam_TrackFirst(){
+	var etuParam = doEtuParamSetting('ERTrack03_recommend_content', 'initViewedTabEvent');
+	return etuParam;
+}
+
+function etuParam_Track(){
+	var etuParam = doEtuParamSetting('ERTrack03_recommend_content', '');
+	return etuParam;
+} 
+
+function doEtuParamSetting(innerHtmlId, etuProdsCallBackFun){
+	var etuParam = {
+			kdid: $('#currentRecoKdid').val(),
+			type: 'PObj_Etu_RecoTypeTwenty',
+			htmlType: "K",
+			innerHtmlId : innerHtmlId,
+			etuProdsCallBackFun : etuProdsCallBackFun,
+			firstProd : $('#currentRecoProdXuid').val(),
+		    firstProdCate :	$('#currentRecoProdCateid').val()
+		};
+		return etuParam;
+}
+
+
+
+
+
+
+
+$(window).load(function() {
+	
+	$(".history_block .ht_loading").show();
+
+	getViewedData();
+
+});
+
+
+function initViewedTabEvent(){
+	
+	$('.viewed_tab a').click(function(e) {
+        e.preventDefault();
+        var nowHt = $('.history_tab').index($(this).parent().parent());
+        $('.history_tab').removeClass('active');
+        $(this).parent().parent().addClass('active');
+        $('.ht_cont').hide().removeClass('active');
+        $('.ht_cont').eq(nowHt).show().addClass('active');
+        loadViewedList();
+    });
+}
+
+function initTrackTabEvent(){
+	
+	$('.track_tab a').click(function(e) {
+        e.preventDefault();
+        var nowHt = $('.history_tab').index($(this).parent().parent());
+        $('.history_tab').removeClass('active');
+        $(this).parent().parent().addClass('active');
+        $('.ht_cont').hide().removeClass('active');
+        $('.ht_cont').eq(nowHt).show().addClass('active');
+        loadTrackList();
+    });
+}
+
+
+function getViewedData(){
+
+	
+	
+	    var lastviewPdtData = $.cookie(lastviewPdtCookie);
+
+        // 若有瀏覽紀錄則顯示 , 無則該區塊隱藏
+        if(lastviewPdtData != null && lastviewPdtData.length > 0){
+    	    $('#history_block').show();
+    	    loadViewedList();
+        } 
+    
+}
+
+
+
+function initViewedTrackProd(className){
+	
+	$('.'+className).slick();
+
+    $('#history_block').show();
+    
+	$('.ht_secitem a').click(function(e) {
+		$(this).parent().siblings('.ht_secitem').removeClass('active');
+		$(this).parent().addClass('active');
+	});
+	
+}
+
+
+function getRccoProdsByProd(cargxuid, salecate, kdid){
+	
+	$(".history_block .ht_loading").show();
+	
+	
+	if($('#'+cargxuid+'_'+kdid+'_reco_html').length > 0) {		
+		
+		reBuildCurrentSlick(cargxuid, kdid);
+
+		$(".history_block .ht_loading").hide();
+		
+	
+		
+	}else{
+
+     	getRccoProdsByProdByT(cargxuid, salecate, kdid);
+		
+	}
+	
+	
+}
+
+
+function loadViewedList(){
+	
+	
+	if($('#viewed_main_content li').length > 0){
+		
+		$('#viewed_main_content').find('li.active img').click();
+		return;
+	}
+	
+	$(".history_block .ht_loading").show();
+	
+    $.ajax({
+	    type: 'post',
+	    url: '/mall/cus/meb/Cc1m28.ajax?dc_btn_0=Func_Show_BwsHis_OrderBox',
+	    data: [],
+	    dataType: 'json',
+	    success: function(data) {
+
+		    if (data != null && data.length > 0 ){
+		    	 var content ='';
+		    	 
+			     for (var i=0; i<data.length ; i++){
+			    	 content += getProdPicHtml(i, data[i].Link, viewedKdid, data[i].Cargxuid, data[i].MidSalecate, data[i].SrcSmall);     
+	             }
+			     
+		         $('#viewed_main_content').html(content);
+			   
+		         initViewedTrackProd('slideshow_viewed');
+		         //預設第一品
+		         $('#viewed_main_content').find('li.slick-active:first').find('a').click();
+		         
+		         getRccoProdsByProdByT(data[0].Cargxuid, data[0].MidSalecate, viewedKdid, "Y");
+		         
+		         
+		    }else{
+		    	
+		    	$('.ht_1 .ht_upper').hide();
+		    	$('.ht_1 #viewed_main_content').html('<p class="ht_empty_btn" >無瀏覽商品</p>');
+		        $(".history_block .ht_loading").hide();
+		        initTrackTabEvent();
+		    }
+		    
+		      return;
+	    },
+	    error: function(xhr, ajaxOptions, thrownError) {
+	    	$(".history_block .ht_loading").hide();
+	    } 
+    });
+
+}
+
+
+
+function loadTrackList() {
+	
+
+	
+      $('.ht_2 .ht_upper').hide();
+      $('.ht_2 #track_main_content').html('<a class="ht_login_btn_new" href="javascript:openLoginView();">登入買東西</a>');
+      initViewedTabEvent();
+	
+}
+
+
+
+function getProdPicHtml(index, link, kdid, cargxuid, salecate, sPicSrc){
+	var activeClass = "";
+	if(index == 0){
+		activeClass = "active";
+	}
+	var prodHtml = '<li class="ht_secitem '+ activeClass +'">'
+                 +      '<a href="javascript:getRccoProdsByProd(\''+ cargxuid +'\', \''+ salecate +'\', \''+ kdid +'\');" alt="">'
+                 +             '<img src="'+ sPicSrc +'" alt="">'
+                 +      '</a>'
+                 + '</li>'; 
+             
+   return prodHtml;
+}
+
+
+
+
+
+
+瀏覽紀錄和精選推薦
+
+
+
+
+追蹤商品和精選推薦
+
+
+
+
+
+
+
+您看過的商品
+                
+
+編輯您的瀏覽紀錄
+
+
+
+
+
+
+
+
+
+
+根據您看過的商品，推薦您下列精選商品
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+您追蹤的商品
+                
+
+編輯您的追蹤商品
+
+
+
+
+
+
+
+
+
+
+根據您追蹤的商品，推薦您下列精選商品
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+購物重要說明
+＊商品訂購＊
+
+訂購完成將寄發訂購完成通知函。通知函僅通知接獲購買需求，非訂單確認。
+每商品每帳戶限購 3 件。超出購買件數或訂購收件資料不正確、無人收件、拒絕收件等情況，udn買東西購物中心有權取消訂單。
+商品規格、圖片、說明、無庫存、價格或交易條件有誤及其他無法接受訂單情形，將通知您訂單不成立/取消訂單並辦理退款，敬請見諒。
+請詳閱商品連結之各活動說明頁，實際回饋或折扣以說明頁、購物結帳金額為準。
+
+＊商品配送＊ 
+
+一筆訂單只接受一種配送方式，如果您需要將商品配送至兩個以上的地址、或希望以不同方式配送請分批訂購。
+多筆相同收件地址的訂單可能會合併包裝配送。
+宅配人員在配送前可能會與您聯絡，敬請保持手機或市話暢通。
+超商取貨商品送達指定門市後，將發送簡訊及Email通知您。 
+
+
+
+
+
+
+
+
+
+
+宅配到府 
+配送範圍說明
+ 七個工作天內 
+宅配到府
+(雜誌/預購/訂製品除外)
+配送至指定 
+ 便利商店門市 
+(7-11/ 全家 / OK / 萊爾富)
+僅限澎湖、金門、 
+綠島、蘭嶼及小琉球
+(不含馬祖)
+
+
+單次消費未滿490元 
+加收80元運費
+免運費 
+除特別說明商品
+免運費 
+除特別說明商品
+依商品 
+頁面標示
+
+
+
+＊商品退貨＊
+
+訂購享商品到貨後七日鑑賞期。
+退貨商品（含贈品及部分加價購商品）須全新狀態且保持商品本體、配件、保證書、附隨文件、原廠內外包裝、裝箱明細等之完整。若有缺漏須酌收費用。
+勿損毀外盒、勿於原廠包裝上黏貼紙張及書寫文字。
+發票一經開立不得任意更改或改開發票，請參考「電子發票說明」。
+個人衛生用品及智慧財產權保護商品，因衛生及回復原狀困難等因素，一經拆封即無法退貨。
+贈品需一併辦理取消/退貨，加價購商品請依訂單明細標示為準。
+本網站未提供換貨服務。
+
+＊客服中心＊
+如果您對於訂購、付款、配送或其他問題尚有疑問，請參考常見問題集，線上留言、或撥打客服專線，由客服人員為您服務解答。
+
+
+
+
+
+購買本商品可參與下列活動
+限7/11-7/17▼指定分類結帳88折 (專案商品除外、任選分類單一計算)
+
+
+
